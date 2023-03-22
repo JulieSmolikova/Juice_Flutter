@@ -9,8 +9,11 @@ environment:
   sdk: '>=2.19.4 <3.0.0'
 
 dependencies:
+  cloud_firestore:
+  firebase_core:
   flutter:
     sdk: flutter
+  provider:
 
 
   cupertino_icons: ^1.0.2

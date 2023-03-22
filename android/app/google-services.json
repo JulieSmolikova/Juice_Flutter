@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "151757723865",
+    "project_id": "thejuice-dcd9c",
+    "storage_bucket": "thejuice-dcd9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151757723865:android:5b494a89a0829b866486c8",
+        "android_client_info": {
+          "package_name": "com.example.the_juice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151757723865-2kv4ffjlk7rh36ihial3ti18j90l90cb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFNR2blQMECGGCAe15rtw0bbFTOIj8WlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151757723865-2kv4ffjlk7rh36ihial3ti18j90l90cb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
