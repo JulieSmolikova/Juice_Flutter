@@ -91,19 +91,37 @@ class _CatalogPageState extends State<CatalogPage> {
                                       ],
                                     ),
                                     actions: [
+
                                       Consumer<Juice>(
                                           builder: (context, value, child) {
-                                        return ElevatedButton(
+                                        return
+
+                                          ElevatedButton(
                                             onPressed: () {
-                                              Provider.of<Juice>(context,
-                                                      listen: false)
-                                                  .addToBase(
-                                                      _name, _surname, _color);
-                                              Navigator.of(context).pop();
-                                              //if _name && _surname && _color = '';
+                                              if(_name == ''|| _surname == '' || _color == '') {
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context){
+                                                      return AlertDialog(
+                                                        title: const Text('Error'),
+                                                        content: const Text('Empty fields'),
+                                                        actions: [
+                                                          ElevatedButton(
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              child: const Text('OK'))
+                                                        ],
+                                                      );
+                                                    });
+                                              }else{
+                                                Provider.of<Juice>(context, listen: false).addToBase(_name, _surname, _color);
+                                                Navigator.of(context).pop();
+                                              }
                                             },
                                             child: const Text('Submit'));
                                       }),
+
                                       ElevatedButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
