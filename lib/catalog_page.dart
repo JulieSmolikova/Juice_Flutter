@@ -1,7 +1,5 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:the_juice/models/juice_model.dart';
 import 'package:the_juice/widgets/constants.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
 
@@ -13,18 +11,8 @@ class CatalogPage extends StatefulWidget {
 }
 
 class _CatalogPageState extends State<CatalogPage> {
-  void initFirebase() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    initFirebase();
-  }
-
-  String _name = '';
+  late String _name;
   String _surname = '';
   String _color = '';
 
@@ -91,23 +79,18 @@ class _CatalogPageState extends State<CatalogPage> {
                                       ],
                                     ),
                                     actions: [
-
-                                      Consumer<Juice>(
-                                          builder: (context, value, child) {
-                                        return
-
-                                          ElevatedButton(
+                                      ElevatedButton(
                                             onPressed: () {
-                                              if(_name == ''|| _surname == '' || _color == '') {
+                                              if (_name == '' || _surname == '' || _color == '') {
                                                 showDialog(
                                                     context: context,
-                                                    builder: (BuildContext context){
+                                                    builder: (BuildContext context) {
                                                       return AlertDialog(
                                                         title: const Text('Error'),
-                                                        content: const Text('Empty fields'),
+                                                        content: const Text('All fields must be filled'),
                                                         actions: [
-                                                          ElevatedButton(
-                                                              onPressed: () {
+                                                          TextButton(
+                                                              onPressed: (){
                                                                 Navigator.of(context).pop();
                                                               },
                                                               child: const Text('OK'))
@@ -115,12 +98,15 @@ class _CatalogPageState extends State<CatalogPage> {
                                                       );
                                                     });
                                               }else{
-                                                Provider.of<Juice>(context, listen: false).addToBase(_name, _surname, _color);
+                                                FirebaseFirestore.instance.collection('items').add({
+                                                  'name': _name,
+                                                  'surname': _surname,
+                                                  'color': _color,
+                                                });
                                                 Navigator.of(context).pop();
                                               }
                                             },
-                                            child: const Text('Submit'));
-                                      }),
+                                            child: const Text('Submit')),
 
                                       ElevatedButton(
                                           onPressed: () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_juice/widgets/constants.dart';
+import 'package:the_juice/widgets/list_view_catalog.dart';
 
 class JuicePage extends StatefulWidget {
   const JuicePage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _JuicePageState extends State<JuicePage> {
       home: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Container(
+          body: SizedBox(
             width: size.width,
             height: size.height,
             child: Stack(
@@ -54,9 +55,9 @@ class _JuicePageState extends State<JuicePage> {
                 Positioned(
                     top: size.height * 0.45,
                     left: size.width * 0.33,
-                    child: const Text(
-                      '***** Juice',
-                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    child: Text(
+                      globalName,
+                      style: const TextStyle(color: Colors.white, fontSize: 30),
                     )),
 
                 Positioned(
@@ -66,9 +67,9 @@ class _JuicePageState extends State<JuicePage> {
                       height: size.height * 0.12,
                       width: size.width * 0.6,
                       color: Colors.transparent,
-                      child: const Text(
-                        'Description Description Description Description Description',
-                        style: TextStyle(color: Colors.white, fontSize: 21),
+                      child: Text(
+                        globalSurname,
+                        style: const TextStyle(color: Colors.white, fontSize: 21),
                       ),
                     )),
 
@@ -79,9 +80,9 @@ class _JuicePageState extends State<JuicePage> {
                       height: size.height * 0.12,
                       width: size.width * 0.6,
                       color: Colors.transparent,
-                      child: const Text(
-                        '\$ Price',
-                        style: TextStyle(color: Colors.white, fontSize: 21),
+                      child: Text(
+                        '\$ $globalColor',
+                        style: const TextStyle(color: Colors.white, fontSize: 21),
                       ),
                     )),
 
@@ -108,15 +109,15 @@ class _JuicePageState extends State<JuicePage> {
                   child: GestureDetector(
                     onTap: (){},
                     child: Container(width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                        //border: Border.all(color: Colors.white.withOpacity(0.7), width: 2),
-                        color: KBlueDark,
-                        borderRadius: const BorderRadius.all(Radius.circular(50))
-                    ),
-                    child: Center(child: Text('BUY', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 18),)),
-                ),
-                  ),)
+                      height: 60,
+                      decoration: const BoxDecoration(
+                          //border: Border.all(color: Colors.white.withOpacity(0.7), width: 2),
+                          color: KBlueDark,
+                          borderRadius: BorderRadius.all(Radius.circular(50))
+                      ),
+                      child: Center(child: Text('BUY', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 18),)),
+                  ),
+                ),)
               ],
             ),
           ),
