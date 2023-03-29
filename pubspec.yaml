@@ -17,6 +17,8 @@ dependencies:
 
 
   cupertino_icons: ^1.0.2
+  image_picker: ^0.8.7+1
+  firebase_storage: ^11.0.16
 
 dev_dependencies:
   flutter_test:
@@ -26,11 +28,11 @@ dev_dependencies:
 
 flutter:
 
-
   uses-material-design: true
 
   assets:
     - assets/images/
+    - assets/images/catalog/
 
   fonts:
     - family: Mynerve Regular

@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:the_juice/widgets/constants.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class CatalogPage extends StatefulWidget {
   const CatalogPage({Key? key}) : super(key: key);
@@ -15,6 +18,27 @@ class _CatalogPageState extends State<CatalogPage> {
   late String _name;
   String _surname = '';
   String _color = '';
+  String imagePath = 'https://cdn.pixabay.com/photo/2019/02/12/16/09/orange-3992583_960_720.jpg';
+
+  final ImagePicker _picker = ImagePicker();
+
+  Future _selectFromGallery(String from) async {
+    XFile? selectedFile = await _picker.pickImage(source: from == 'photo' ? ImageSource.camera : ImageSource.gallery);
+    if (selectedFile == null) return;
+
+    String uniqueFileName = DateTime.now().microsecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImage = referenceRoot.child('images');
+    Reference referenceImageToUpload = referenceDirImage.child(uniqueFileName);
+
+    try{
+      await referenceImageToUpload.putFile(File(selectedFile.path));
+      imagePath = await referenceImageToUpload.getDownloadURL();
+    }catch(e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +48,7 @@ class _CatalogPageState extends State<CatalogPage> {
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
           body: Container(
             width: size.width,
@@ -76,12 +101,28 @@ class _CatalogPageState extends State<CatalogPage> {
                                             _color = value;
                                           },
                                         ),
+                                        const SizedBox(height: 22,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  _selectFromGallery('photo');
+                                                },
+                                                icon: const Icon(Icons.photo_camera)),
+                                            IconButton(
+                                                onPressed: () {
+                                                  _selectFromGallery('image');
+                                                },
+                                                icon: const Icon(Icons.image))
+                                          ],
+                                        )
                                       ],
                                     ),
                                     actions: [
                                       ElevatedButton(
                                             onPressed: () {
-                                              if (_name == '' || _surname == '' || _color == '') {
+                                              if (_name == '' || _surname == '' || _color == '' || imagePath == '') {
                                                 showDialog(
                                                     context: context,
                                                     builder: (BuildContext context) {
@@ -102,6 +143,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                                   'name': _name,
                                                   'surname': _surname,
                                                   'color': _color,
+                                                  'image': imagePath,
                                                 });
                                                 Navigator.of(context).pop();
                                               }
@@ -146,12 +188,12 @@ class _CatalogPageState extends State<CatalogPage> {
                       ),
                     )),
                 Positioned(
-                  top: size.height * 0.15,
-                  right: -115,
+                  top: size.height * 0.12,
+                  right: -70,
                   child: Container(
                       color: Colors.transparent,
-                      height: size.height * 0.3,
-                      width: size.width * 0.95,
+                      height: size.height * 0.35,
+                      //width: size.width * 0.95,
                       child: Center(
                           child: Image.asset('assets/images/juice.png'))),
                 ),

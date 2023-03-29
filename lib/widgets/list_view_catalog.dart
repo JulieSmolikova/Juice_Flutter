@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:the_juice/juice_page.dart';
+import 'package:the_juice/widgets/constants.dart';
 
 String globalName = '';
 String globalSurname = '';
 String globalColor = '';
+String image = '';
 
 class ListViewCatalog extends StatefulWidget {
   const ListViewCatalog({Key? key}) : super(key: key);
@@ -15,21 +17,25 @@ class ListViewCatalog extends StatefulWidget {
 
 class _ListViewCatalogState extends State<ListViewCatalog> {
 
-  void toItem(String nameFromBase, String surnameFromBase, String colorFromBase) {
+
+  void toItem(String nameFromBase, String surnameFromBase, String colorFromBase, String images) {
     setState(() {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const JuicePage()),
       );
       globalName = nameFromBase;
       globalSurname = surnameFromBase;
       globalColor = colorFromBase;
+      image = images;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('items').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(),);
           return ListView.builder(
             itemCount: snapshot.data?.docs.length,
@@ -41,6 +47,7 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                     snapshot.data?.docs[index].get('name'),
                     snapshot.data?.docs[index].get('surname'),
                     snapshot.data?.docs[index].get('color'),
+                    snapshot.data?.docs[index].get('image'),
                   );
                 }),
                 onLongPress: () {
@@ -71,21 +78,22 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                   height: 100,
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(17)
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(17)
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(snapshot.data?.docs[index].get('name'),),
-                      Text(snapshot.data?.docs[index].get('surname'),),
-                      Text(snapshot.data?.docs[index].get('color'),),
-                    ],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                            child: Image.network(snapshot.data?.docs[index].get('image'))),
+                        Text(snapshot.data?.docs[index].get('name'),),
+                        Text(snapshot.data?.docs[index].get('surname'),),
+                        Text(snapshot.data?.docs[index].get('color'),),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+            },);
         });
   }
 }

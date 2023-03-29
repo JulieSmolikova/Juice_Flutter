@@ -50,7 +50,7 @@ class _JuicePageState extends State<JuicePage> {
                 Positioned(
                     top: size.height * 0.17,
                     left: size.width * 0.29,
-                    child: Container(color: Colors.transparent, height: 200, width: 150, child: Image.asset('assets/images/juice_icon.png', fit: BoxFit.cover,))),
+                    child: Container(color: Colors.transparent, height: 200, width: 150, child: Image.asset('assets/images/i5.png', fit: BoxFit.cover,))),
 
                 Positioned(
                     top: size.height * 0.45,
