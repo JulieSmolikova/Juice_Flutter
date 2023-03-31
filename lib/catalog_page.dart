@@ -233,15 +233,36 @@ class _CatalogPageState extends State<CatalogPage> {
                 Positioned(
                     top: size.height * 0.63,
                     left: size.width * 0.1,
-                    child: Container(
-                      height: size.height * 0.05,
-                      width: size.width * 0.4,
-                      color: Colors.transparent,
-                      child: Text(
-                        'Variation :',
-                        style: style_var,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: size.height * 0.05,
+                          width: size.width * 0.4,
+                          color: Colors.transparent,
+                          child: Text(
+                            'Variation :',
+                            style: style_var,
+                          ),
+                        ),
+                        SizedBox(width: size.width * 0.25,),
+                        GestureDetector(
+                          onTapDown: (_){},
+                          onTapUp: (_){},
+                          child: Container(
+                              height: 30,
+                              width: size.width * 0.15,
+                              color: Colors.orange,
+                              child: Center(child: Text('+/-'))
+                          ),
+                        )
+                      ],
                     )),
+
+                // Positioned(
+                //     top: size.height * 0.63,
+                //     right: size.width * 0.1,
+                //     child: ),
+
                 Positioned(
                     top: size.height * 0.69,
                     left: 0,
