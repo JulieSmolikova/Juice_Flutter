@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:the_juice/widgets/constants.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
@@ -20,6 +21,7 @@ class _CatalogPageState extends State<CatalogPage> {
   String _color = '';
   String imagePath = 'https://cdn.pixabay.com/photo/2019/02/12/16/09/orange-3992583_960_720.jpg';
 
+  // ImagePicker
   final ImagePicker _picker = ImagePicker();
 
   Future _selectFromGallery(String from) async {
@@ -33,11 +35,34 @@ class _CatalogPageState extends State<CatalogPage> {
     Reference referenceImageToUpload = referenceDirImage.child(uniqueFileName);
 
     try{
+      print('start');
+
       await referenceImageToUpload.putFile(File(selectedFile.path));
+
+      print('end');
+
       imagePath = await referenceImageToUpload.getDownloadURL();
     }catch(e) {
       print(e);
     }
+  }
+
+  // Order By 'price' (color)
+  List<String> docIds = [];
+
+  Future getDocId() async {
+    await FirebaseFirestore.instance
+      .collection('items')
+      .orderBy('color', descending: true)
+      .get()
+      .then(
+        (snapshot) => snapshot.docs.forEach(
+          (document) {
+            print(document.reference);
+            docIds.add(document.reference.id);
+          }
+        )
+      );
   }
 
   @override
@@ -55,14 +80,14 @@ class _CatalogPageState extends State<CatalogPage> {
             height: size.height,
             decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [KBlueDark, KBlueGrey],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.4, 1])),
+                    colors: [KBlueDark, KBlueGrey, KBlueGrey],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    stops: [0.2, 0.7, 1])),
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0, right: 15, left: 15),
+                  padding: const EdgeInsets.only(top: 15.0, right: 15, left: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -71,15 +96,32 @@ class _CatalogPageState extends State<CatalogPage> {
                         size: 40,
                         color: Colors.white.withOpacity(0.7),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Add position'),
+                      GestureDetector(
+                        onTap: (){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SingleChildScrollView(
+                                  child: AlertDialog(
+                                    title: const Center(child: Text('Add position')),
                                     content: Column(
                                       children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  _selectFromGallery('photo');
+                                                },
+                                                icon: const Icon(Icons.photo_camera)),
+                                            IconButton(
+                                                onPressed: () {
+                                                  _selectFromGallery('image');
+                                                },
+                                                icon: const Icon(Icons.image))
+                                          ],
+                                        ),
+                                        const SizedBox(height: 15,),
                                         TextField(
                                           decoration: const InputDecoration(
                                               hintText: 'Name'),
@@ -96,59 +138,43 @@ class _CatalogPageState extends State<CatalogPage> {
                                         ),
                                         TextField(
                                           decoration: const InputDecoration(
-                                              hintText: 'Color'),
+                                              hintText: 'Price'),
                                           onChanged: (String value) {
                                             _color = value;
                                           },
                                         ),
-                                        const SizedBox(height: 22,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            IconButton(
-                                                onPressed: () {
-                                                  _selectFromGallery('photo');
-                                                },
-                                                icon: const Icon(Icons.photo_camera)),
-                                            IconButton(
-                                                onPressed: () {
-                                                  _selectFromGallery('image');
-                                                },
-                                                icon: const Icon(Icons.image))
-                                          ],
-                                        )
                                       ],
                                     ),
                                     actions: [
                                       ElevatedButton(
-                                            onPressed: () {
-                                              if (_name == '' || _surname == '' || _color == '' || imagePath == '') {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: const Text('Error'),
-                                                        content: const Text('All fields must be filled'),
-                                                        actions: [
-                                                          TextButton(
-                                                              onPressed: (){
-                                                                Navigator.of(context).pop();
-                                                              },
-                                                              child: const Text('OK'))
-                                                        ],
-                                                      );
-                                                    });
-                                              }else{
-                                                FirebaseFirestore.instance.collection('items').add({
-                                                  'name': _name,
-                                                  'surname': _surname,
-                                                  'color': _color,
-                                                  'image': imagePath,
-                                                });
-                                                Navigator.of(context).pop();
-                                              }
-                                            },
-                                            child: const Text('Submit')),
+                                          onPressed: () {
+                                            if (_name == '' || _surname == '' || _color == '' || imagePath == '') {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text('Error'),
+                                                      content: const Text('All fields must be filled'),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: (){
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: const Text('OK'))
+                                                      ],
+                                                    );
+                                                  });
+                                            }else{
+                                              FirebaseFirestore.instance.collection('items').add({
+                                                'name': _name,
+                                                'surname': _surname,
+                                                'color': _color,
+                                                'image': imagePath,
+                                              });
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                          child: const Text('Submit')),
 
                                       ElevatedButton(
                                           onPressed: () {
@@ -156,14 +182,21 @@ class _CatalogPageState extends State<CatalogPage> {
                                           },
                                           child: const Text('Close')),
                                     ],
-                                  );
-                                });
-                          },
-                          icon: Icon(
-                            Icons.add_circle,
-                            size: 38,
-                            color: Colors.white.withOpacity(0.7),
-                          ))
+                                  ),
+                                );
+                              });
+                        },
+                        child: Container(
+                          width: 37,
+                          height: 37,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(width: 1, color: Colors.white.withOpacity(0.4),)
+                          ),
+                          child: Icon(Icons.add, size: 28, color: Colors.white.withOpacity(0.6),),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -171,9 +204,10 @@ class _CatalogPageState extends State<CatalogPage> {
                     top: size.height * 0.23,
                     left: size.width * 0.13,
                     child: Text(
-                      '   the \nJUICE',
+                      '  the \nJUICE',
                       style: style_logo,
-                    )),
+                    )
+                ),
                 Positioned(
                     top: size.height * 0.42,
                     left: size.width * 0.13,
@@ -183,8 +217,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       color: Colors.transparent,
                       child: Text(
                         'We provide a variety \nof fresh juices with \nvarious flavors. get \nfresh juice easily',
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.7), fontSize: 23),
+                        style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 20, fontFamily: 'Playfair Display Regular'),
                       ),
                     )),
                 Positioned(
@@ -206,8 +239,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       color: Colors.transparent,
                       child: Text(
                         'Variation :',
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.7), fontSize: 23),
+                        style: style_var,
                       ),
                     )),
                 Positioned(

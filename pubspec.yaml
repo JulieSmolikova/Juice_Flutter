@@ -42,3 +42,11 @@ flutter:
     - family: Grape Nuts Regular
       fonts:
         - asset: assets/fonts/GrapeNuts-Regular.ttf
+
+    - family: Playfair Display Regular
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay.ttf
+
+    - family: Waiting
+      fonts:
+        - asset: assets/fonts/WaitingfortheSunrise-Regular.ttf

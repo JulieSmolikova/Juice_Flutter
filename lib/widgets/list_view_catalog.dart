@@ -74,23 +74,32 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                       });
                 },
                 child: Container(
-                  width: 100,
-                  height: 100,
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  height: size.height * 0.2,
+                  width: size.width * 0.26,
+                  clipBehavior: Clip.hardEdge,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(17)
                   ),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                            child: Image.network(snapshot.data?.docs[index].get('image'))),
-                        Text(snapshot.data?.docs[index].get('name'),),
-                        Text(snapshot.data?.docs[index].get('surname'),),
-                        Text(snapshot.data?.docs[index].get('color'),),
-                      ],
-                    ),
+                  child: Stack(
+                    children: [
+                      Positioned(top:0, child: SizedBox(height: size.height * 0.2,
+                          width: size.width * 0.26, child: Image.network(snapshot.data?.docs[index].get('image'), fit: BoxFit.fitHeight,))),
+                      //Center(child: Text(snapshot.data?.docs[index].get('name'),)),
+                      //Positioned(bottom: 5, right: 35, child: Text(snapshot.data?.docs[index].get('color'),)),
+                    ],
+                  ),
+
+                  // Column(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                        //Flexible(child: Image.network(snapshot.data?.docs[index].get('image'))),
+                        // Text(snapshot.data?.docs[index].get('name'),),
+                        // Text(snapshot.data?.docs[index].get('surname'),),
+                        // Text(snapshot.data?.docs[index].get('color'),),
+                    //   ],),
+
                   ),
                 );
             },);
