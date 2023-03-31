@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:the_juice/catalog_page.dart';
 import 'package:the_juice/juice_page.dart';
 import 'package:the_juice/widgets/constants.dart';
 
@@ -7,6 +8,7 @@ String globalName = '';
 String globalSurname = '';
 String globalColor = '';
 String image = '';
+bool isDescending = true;
 
 class ListViewCatalog extends StatefulWidget {
   const ListViewCatalog({Key? key}) : super(key: key);
@@ -16,7 +18,6 @@ class ListViewCatalog extends StatefulWidget {
 }
 
 class _ListViewCatalogState extends State<ListViewCatalog> {
-
 
   void toItem(String nameFromBase, String surnameFromBase, String colorFromBase, String images) {
     setState(() {
@@ -34,7 +35,7 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
     Size size = MediaQuery.of(context).size;
 
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('items').snapshots(),
+      stream: FirebaseFirestore.instance.collection('items').orderBy('color', descending: isDescending).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(),);
           return ListView.builder(

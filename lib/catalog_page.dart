@@ -16,6 +16,12 @@ class CatalogPage extends StatefulWidget {
 
 class _CatalogPageState extends State<CatalogPage> {
 
+  void isPressed() {
+    setState(() {
+      isDescending = !isDescending;
+    });
+  }
+
   late String _name;
   String _surname = '';
   String _color = '';
@@ -45,24 +51,6 @@ class _CatalogPageState extends State<CatalogPage> {
     }catch(e) {
       print(e);
     }
-  }
-
-  // Order By 'price' (color)
-  List<String> docIds = [];
-
-  Future getDocId() async {
-    await FirebaseFirestore.instance
-      .collection('items')
-      .orderBy('color', descending: true)
-      .get()
-      .then(
-        (snapshot) => snapshot.docs.forEach(
-          (document) {
-            print(document.reference);
-            docIds.add(document.reference.id);
-          }
-        )
-      );
   }
 
   @override
@@ -246,22 +234,20 @@ class _CatalogPageState extends State<CatalogPage> {
                         ),
                         SizedBox(width: size.width * 0.25,),
                         GestureDetector(
-                          onTapDown: (_){},
-                          onTapUp: (_){},
+                          onTap: (){
+                            setState(() {
+                              isPressed();
+                            });
+                          },
                           child: Container(
                               height: 30,
                               width: size.width * 0.15,
-                              color: Colors.orange,
+                              color: isDescending ? Colors.orange : Colors.green,
                               child: Center(child: Text('+/-'))
                           ),
                         )
                       ],
                     )),
-
-                // Positioned(
-                //     top: size.height * 0.63,
-                //     right: size.width * 0.1,
-                //     child: ),
 
                 Positioned(
                     top: size.height * 0.69,
