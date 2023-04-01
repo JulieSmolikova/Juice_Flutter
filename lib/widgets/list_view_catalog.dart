@@ -9,6 +9,7 @@ String globalSurname = '';
 String globalColor = '';
 String image = '';
 bool isDescending = true;
+int favorite = 0;
 
 class ListViewCatalog extends StatefulWidget {
   const ListViewCatalog({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class ListViewCatalog extends StatefulWidget {
 
 class _ListViewCatalogState extends State<ListViewCatalog> {
 
-  void toItem(String nameFromBase, String surnameFromBase, String colorFromBase, String images) {
+  void toItem(String nameFromBase, String surnameFromBase, String colorFromBase, String images, int favorites) {
     setState(() {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const JuicePage()),
       );
@@ -27,6 +28,7 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
       globalSurname = surnameFromBase;
       globalColor = colorFromBase;
       image = images;
+      favorite = favorites;
     });
   }
 
@@ -49,6 +51,7 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                     snapshot.data?.docs[index].get('surname'),
                     snapshot.data?.docs[index].get('color'),
                     snapshot.data?.docs[index].get('image'),
+                    snapshot.data?.docs[index].get('favorite'),
                   );
                 }),
                 onLongPress: () {
@@ -100,37 +103,24 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                           child: IconButton(
                             onPressed: (){
                               print('favorite');
-                              if (snapshot.data?.docs[index].get('favorite') == '0') {
-                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).update({'favorite': '1'});
+                              if (snapshot.data?.docs[index].get('favorite') == 0) {
+                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).
+                                update({'favorite': 1});
                               }else{
-                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).update({'favorite': '0'});
+                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).
+                                update({'favorite': 0});
                               }
                             },
-                            icon: Icon(snapshot.data?.docs[index].get('favorite') == '0'
+                            icon: Icon(snapshot.data?.docs[index].get('favorite') == 0
                               ? Icons.favorite_border
                               : Icons.favorite,
                               size: 40,
-                              color: snapshot.data?.docs[index].get('favorite') == '0'
+                              color: snapshot.data?.docs[index].get('favorite') == 0
                               ? Colors.white
                               : Colors.deepOrange,),
                           ))
                     ],
                   ),
-
-
-
-
-
-
-                  // Column(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                        //Flexible(child: Image.network(snapshot.data?.docs[index].get('image'))),
-                        // Text(snapshot.data?.docs[index].get('name'),),
-                        // Text(snapshot.data?.docs[index].get('surname'),),
-                        // Text(snapshot.data?.docs[index].get('color'),),
-                    //   ],),
-
                   ),
                 );
             },);

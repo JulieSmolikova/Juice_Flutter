@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:the_juice/widgets/constants.dart';
+import 'package:the_juice/widgets/glow_box.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+
+//int favorite = 0;
 
 class CatalogPage extends StatefulWidget {
   const CatalogPage({Key? key}) : super(key: key);
@@ -26,6 +29,7 @@ class _CatalogPageState extends State<CatalogPage> {
   String _surname = '';
   String _color = '';
   String imagePath = 'https://cdn.pixabay.com/photo/2019/02/12/16/09/orange-3992583_960_720.jpg';
+
 
   // ImagePicker
   final ImagePicker _picker = ImagePicker();
@@ -74,6 +78,17 @@ class _CatalogPageState extends State<CatalogPage> {
                     stops: [0.2, 0.7, 1])),
             child: Stack(
               children: [
+                Positioned(
+                  top: 0,
+                  right: -10,
+                    child: GlowBox(width: 90, height: 90, colorBox: Colors.white.withOpacity(0.6), blurRadius: 200)
+                ),
+                Positioned(
+                    top: -20,
+                    right: -30,
+                    child: GlowBox(width: 70, height: 70, colorBox: Colors.orange.withOpacity(0.7), blurRadius: 200)
+                ),
+
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0, right: 15, left: 15),
                   child: Row(
@@ -158,7 +173,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                                 'surname': _surname,
                                                 'color': _color,
                                                 'image': imagePath,
-                                                'favorite': 0,
+                                                'favorite': favorite,
                                               });
                                               Navigator.of(context).pop();
                                             }
@@ -215,7 +230,6 @@ class _CatalogPageState extends State<CatalogPage> {
                   child: Container(
                       color: Colors.transparent,
                       height: size.height * 0.35,
-                      //width: size.width * 0.95,
                       child: Center(
                           child: Image.asset('assets/images/juice.png'))),
                 ),
@@ -243,8 +257,11 @@ class _CatalogPageState extends State<CatalogPage> {
                           child: Container(
                               height: 30,
                               width: size.width * 0.15,
-                              color: isDescending ? Colors.orange : Colors.green,
-                              child: Center(child: Text('+/-'))
+                              decoration: BoxDecoration(
+                                color: isDescending ? Colors.orange : Colors.green,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Center(child: Text('+/-'))
                           ),
                         )
                       ],
