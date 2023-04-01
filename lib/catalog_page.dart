@@ -158,6 +158,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                                 'surname': _surname,
                                                 'color': _color,
                                                 'image': imagePath,
+                                                'favorite': 0,
                                               });
                                               Navigator.of(context).pop();
                                             }

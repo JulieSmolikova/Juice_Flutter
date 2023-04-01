@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:the_juice/widgets/constants.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
@@ -21,7 +20,7 @@ class _JuicePageState extends State<JuicePage> {
       home: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Container(
+          body: SizedBox(
             width: size.width,
             height: size.height,
             child: Stack(
@@ -44,7 +43,7 @@ class _JuicePageState extends State<JuicePage> {
                       onTap: ((){
                         Navigator.of(context).pop();
                       }),
-                      child: Container(
+                      child: SizedBox(
                         width: 100,
                         child: Stack(
                           children: [

@@ -80,17 +80,47 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                   clipBehavior: Clip.hardEdge,
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    color: Colors.red,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(17)
                   ),
                   child: Stack(
                     children: [
-                      Positioned(top:0, child: SizedBox(height: size.height * 0.2,
-                          width: size.width * 0.26, child: Image.network(snapshot.data?.docs[index].get('image'), fit: BoxFit.fitHeight,))),
-                      //Center(child: Text(snapshot.data?.docs[index].get('name'),)),
-                      //Positioned(bottom: 5, right: 35, child: Text(snapshot.data?.docs[index].get('color'),)),
+                      Positioned(
+                        top: 0,
+                        child: SizedBox(
+                            height: size.height * 0.2,
+                            width: size.width * 0.26,
+                            child: Image.network(
+                              snapshot.data?.docs[index].get('image'),
+                              fit: BoxFit.fitHeight,)),
+                      ),
+                      Positioned(
+                          bottom: 5,
+                          right: 5,
+                          child: IconButton(
+                            onPressed: (){
+                              print('favorite');
+                              if (snapshot.data?.docs[index].get('favorite') == '0') {
+                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).update({'favorite': '1'});
+                              }else{
+                                FirebaseFirestore.instance.collection('items').doc(snapshot.data?.docs[index].id).update({'favorite': '0'});
+                              }
+                            },
+                            icon: Icon(snapshot.data?.docs[index].get('favorite') == '0'
+                              ? Icons.favorite_border
+                              : Icons.favorite,
+                              size: 40,
+                              color: snapshot.data?.docs[index].get('favorite') == '0'
+                              ? Colors.white
+                              : Colors.deepOrange,),
+                          ))
                     ],
                   ),
+
+
+
+
+
 
                   // Column(
                   //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
