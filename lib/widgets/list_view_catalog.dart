@@ -9,7 +9,9 @@ String globalSurname = '';
 String globalColor = '';
 String image = '';
 bool isDescending = true;
-int favorite = 0;
+int globalFavorite = 0;
+dynamic globalSnapshot;
+int globalIndex = 0;
 
 class ListViewCatalog extends StatefulWidget {
   const ListViewCatalog({Key? key}) : super(key: key);
@@ -22,13 +24,12 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
 
   void toItem(String nameFromBase, String surnameFromBase, String colorFromBase, String images, int favorites) {
     setState(() {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const JuicePage()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => JuicePage()),);
       globalName = nameFromBase;
       globalSurname = surnameFromBase;
       globalColor = colorFromBase;
       image = images;
-      favorite = favorites;
+      globalFavorite = favorites;
     });
   }
 
@@ -44,6 +45,7 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
             itemCount: snapshot.data?.docs.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
+              //final item = snapshot.data?.docs[index];
               return GestureDetector(
                 onTap: ((){
                   toItem(
@@ -53,6 +55,8 @@ class _ListViewCatalogState extends State<ListViewCatalog> {
                     snapshot.data?.docs[index].get('image'),
                     snapshot.data?.docs[index].get('favorite'),
                   );
+                  globalIndex = index;
+                  globalSnapshot = snapshot;
                 }),
                 onLongPress: () {
                   showDialog(

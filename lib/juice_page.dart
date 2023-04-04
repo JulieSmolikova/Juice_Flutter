@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:the_juice/basket.dart';
 import 'package:the_juice/catalog_page.dart';
 import 'package:the_juice/widgets/constants.dart';
 import 'package:the_juice/widgets/list_view_catalog.dart';
+
 
 class JuicePage extends StatefulWidget {
   const JuicePage({Key? key}) : super(key: key);
@@ -13,9 +15,19 @@ class JuicePage extends StatefulWidget {
 }
 
 class _JuicePageState extends State<JuicePage> {
+
   void toItem(int favorites) {
     setState(() {
-      favorite = favorites;
+      globalFavorite = favorites;
+    });
+  }
+
+  void _addToBasket(String globalName, String globalSurname, globalColor, image) {
+    FirebaseFirestore.instance.collection('basket').add({
+      'name': globalName,
+      'surname': globalSurname,
+      'color': globalColor,
+      'image': image,
     });
   }
 
@@ -200,79 +212,138 @@ class _JuicePageState extends State<JuicePage> {
                 Positioned(
                     top: 160,
                     right: 115,
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('items')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return IconButton(
-                            onPressed: () {
-                              toItem(
-                                snapshot.data?.docs[index].get('favorite'),
-                              );
-                              print('favorit_page');
-                              if (snapshot.data?.docs[index].get('favorite') ==
-                                  0) {
-                                FirebaseFirestore.instance
-                                    .collection('items')
-                                    .doc(snapshot.data?.docs[index].id)
-                                    .update({'favorite': 1});
-                              } else {
-                                FirebaseFirestore.instance
-                                    .collection('items')
-                                    .doc(snapshot.data?.docs[index].id)
-                                    .update({'favorite': 0});
-                              }
-                            },
-                            icon: Icon(
-                                favorite == 0
-                                    ? Icons.favorite_border
-                                    : Icons.favorite,
-                                size: 35,
-                                color: favorite == 0
-                                    ? Colors.white
-                                    : Colors.deepOrange),
-                          );
-                        })),
+                    child: IconButton(
+                      onPressed: () {
+                        if (globalSnapshot.data?.docs[globalIndex].get('favorite') == 0) {
+                          FirebaseFirestore.instance
+                              .collection('items')
+                              .doc(globalSnapshot.data?.docs[globalIndex].id)
+                              .update({'favorite': 1});
+                          setState(() {
+                            if(globalFavorite == 0) {
+                              globalFavorite = 1;
+                            }else{
+                              globalFavorite = 0;
+                            }
+                          });
+                        } else {
+                          FirebaseFirestore.instance
+                              .collection('items')
+                              .doc(globalSnapshot.data?.docs[globalIndex].id)
+                              .update({'favorite': 0});
+                          setState(() {
+                            if(globalFavorite == 0) {
+                              globalFavorite = 1;
+                            }else{
+                              globalFavorite = 0;
+                            }
+                          });
+                        }
+                      },
+                      icon: Icon(
+                          globalFavorite == 0
+                              ? Icons.favorite_border
+                              : Icons.favorite,
+                          size: 35,
+                          color: globalFavorite == 0
+                              ? Colors.white
+                              : Colors.deepOrange),
+                    ),
+                ),
+
+                Positioned(
+                  top: 200,
+                  right: 115,
+                  child: IconButton(
+                    onPressed: () {
+                      print('basket');
+                      _addToBasket(
+                        globalSnapshot.data?.docs[globalIndex].get('name'),
+                        globalSnapshot.data?.docs[globalIndex].get('surname'),
+                        globalSnapshot.data?.docs[globalIndex].get('color'),
+                        globalSnapshot.data?.docs[globalIndex].get('image'),
+                      );
+                        },
+                    icon: Container(
+                      width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: Icon(Icons.shopping_basket_outlined, color: Colors.black.withOpacity(0.7),)),
+                )),
+
                 Positioned(
                   bottom: size.height * 0.04,
-                  right: size.width * 0.08,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                          color: KBlueDark,
-                          gradient: const LinearGradient(
-                              colors: [KBlueDark, KBlueGrey],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              stops: [0.4, 1.0]),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(50)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.white.withOpacity(0.5),
-                                blurRadius: 40,
-                                offset: const Offset(-15, -10)),
-                            BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                blurRadius: 40,
-                                offset: const Offset(15, 10))
-                          ]),
-                      child: Center(
-                          child: Text(
-                        'BUY',
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.7), fontSize: 18),
-                      )),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: (() {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Basket()),);
+                          }),
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color: KBlueDark,
+                                gradient: const LinearGradient(
+                                    colors: [KBlueDark, KBlueGrey],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    stops: [0.4, 1.0]),
+                                borderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.white.withOpacity(0.5),
+                                      blurRadius: 40,
+                                      offset: const Offset(-15, -10)),
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      blurRadius: 40,
+                                      offset: const Offset(15, 10))
+                                ]),
+                            child: SizedBox(width: 30, height: 30,
+                                child: Icon(Icons.shopping_basket_outlined, color: Colors.white.withOpacity(0.5),)),
+                          ),
+                        ),
+                        SizedBox(width: size.width * 0.53,),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color: KBlueDark,
+                                gradient: const LinearGradient(
+                                    colors: [KBlueDark, KBlueGrey],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    stops: [0.4, 1.0]),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(50)),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.white.withOpacity(0.5),
+                                      blurRadius: 40,
+                                      offset: const Offset(-15, -10)),
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      blurRadius: 40,
+                                      offset: const Offset(15, 10))
+                                ]),
+                            child: Center(
+                                child: Text(
+                              'BUY',
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7), fontSize: 18),
+                            )),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )

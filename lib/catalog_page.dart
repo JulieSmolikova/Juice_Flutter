@@ -8,8 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-//int favorite = 0;
-
 class CatalogPage extends StatefulWidget {
   const CatalogPage({Key? key}) : super(key: key);
 
@@ -46,11 +44,8 @@ class _CatalogPageState extends State<CatalogPage> {
 
     try{
       print('start');
-
       await referenceImageToUpload.putFile(File(selectedFile.path));
-
       print('end');
-
       imagePath = await referenceImageToUpload.getDownloadURL();
     }catch(e) {
       print(e);
@@ -173,7 +168,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                                 'surname': _surname,
                                                 'color': _color,
                                                 'image': imagePath,
-                                                'favorite': favorite,
+                                                'favorite': 0,
                                               });
                                               Navigator.of(context).pop();
                                             }
